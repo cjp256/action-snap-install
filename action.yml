@@ -1,0 +1,43 @@
+name: 'Snap Install'
+description: 'Install snapd'
+inputs:
+  strict-snaps:
+    description: 'Strict snaps to install'
+    required: false
+    default: ""
+  classic-snaps:
+    description: 'Classic snaps to install'
+    required: false
+    default: ""
+  devmode-snaps:
+    description: 'Devmode snaps to install'
+    required: false
+    default: ""
+runs:
+  using: "composite"
+  steps: 
+    - id: install-snapd
+      shell: bash
+      run: |
+        sudo chown root:root /
+        sudo apt update
+        sudo apt install -y snapd
+        sudo snap wait system seed.loaded
+    - id: install-strict-snaps
+      shell: bash
+      run: |
+        if [[ -n ${{ inputs.strict-snaps }} ]]; then
+          sudo snap install ${{ inputs.strict-snaps }}
+        fi
+    - id: install-classic-snaps
+      shell: bash
+      run: |
+        if [[ -n ${{ inputs.classic-snaps }} ]]; then
+          sudo snap install --classic ${{ inputs.classic-snaps }}
+        fi
+    - id: install-devmode-snaps
+      shell: bash
+      run: |
+        if [[ -n ${{ inputs.devmode-snaps }} ]]; then
+          sudo snap install --devmode ${{ inputs.devmode-snaps }}
+        fi
